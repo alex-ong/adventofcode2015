@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 
-PART_1 = False
+PART_1 = True
 
 
 class Command(StrEnum):
