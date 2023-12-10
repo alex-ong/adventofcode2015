@@ -7,15 +7,30 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 
+PART_1 = False
+
+
 class Command(StrEnum):
     TOGGLE = "toggle"
     ON = "turn on"
     OFF = "turn off"
 
     def get_value(self, old_value):
-        if self == Command.TOGGLE:
-            return not old_value
-        return self == Command.ON
+        if PART_1:
+            if self == Command.TOGGLE:
+                return 0 if old_value else 1
+            if self == Command.OFF:
+                return 0
+            return 1
+        else:
+            if self == Command.TOGGLE:
+                return old_value + 2
+            elif self == Command.ON:
+                return old_value + 1
+            elif self == Command.OFF:
+                old_value -= 1
+                old_value = max(0, old_value)
+                return old_value
 
 
 @dataclass
@@ -54,7 +69,7 @@ class Grid:
     lights: list[list[bool]]
 
     def __init__(self, size):
-        self.lights = [[False for _ in range(size)] for _ in range(size)]
+        self.lights = [[0 for _ in range(size)] for _ in range(size)]
 
     def execute(self, instruction):
         """executes an instruction"""
@@ -68,10 +83,7 @@ class Grid:
 
     def num_on(self):
         """returns how many are on"""
-        result = 0
-        for row in self.lights:
-            result += sum(1 if light else 0 for light in row)
-        return result
+        return sum(sum(row) for row in self.lights)
 
     def __str__(self):
         return "\n" + "\n".join(
