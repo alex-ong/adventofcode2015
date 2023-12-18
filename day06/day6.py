@@ -6,7 +6,6 @@ https://adventofcode.com/2015/day/6
 from dataclasses import dataclass
 from enum import StrEnum
 
-
 PART_1 = True
 
 
@@ -66,7 +65,7 @@ class Instruction:
 
 
 class Grid:
-    lights: list[list[bool]]
+    lights: list[list[int]]
 
     def __init__(self, size):
         self.lights = [[0 for _ in range(size)] for _ in range(size)]
