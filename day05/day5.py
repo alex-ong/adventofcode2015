@@ -8,12 +8,12 @@ VOWELS = "aeiou"
 NAUGHTY_PAIRS = ["ab", "cd", "pq", "xy"]
 
 
-def count_vowels(string: str):
+def count_vowels(string: str) -> int:
     """Counts vowels in string"""
     return sum(1 if letter in VOWELS else 0 for letter in string)
 
 
-def one_letter_gap(string: str):
+def one_letter_gap(string: str) -> bool:
     """returns true if there's a substring like x_x"""
     for index in range(len(string) - 2):
         substring = string[index : index + 3]
@@ -22,7 +22,7 @@ def one_letter_gap(string: str):
     return False
 
 
-def is_nice(string: str):
+def is_nice(string: str) -> bool:
     """part1"""
     vowel_count = count_vowels(string)
 
@@ -40,7 +40,7 @@ def is_nice(string: str):
     return has_pair
 
 
-def is_nice2(string: str):
+def is_nice2(string: str) -> bool:
     """part 2"""
     if not one_letter_gap(string):
         return False
@@ -55,13 +55,13 @@ def is_nice2(string: str):
     return False
 
 
-def parse_input():
+def parse_input() -> list[str]:
     """gets the lines"""
     with open("input.txt", "r", encoding="utf8") as file:
         return list(file)
 
 
-def main():
+def main() -> None:
     lines: list[str] = parse_input()
 
     # q1
