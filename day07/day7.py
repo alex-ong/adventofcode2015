@@ -1,6 +1,7 @@
 """day7 solution"""
 from collections import defaultdict
 from dataclasses import dataclass
+from typing import Optional
 
 from operation import Operation
 
@@ -50,8 +51,13 @@ def check_wire(
             check_wire(dependent, solved_cache, unsolved, wire_dependents)
 
 
-def main() -> None:
+def solve(override_b: Optional[int] = None) -> int:
     wires = get_input()
+    if override_b is not None:
+        for wire in wires:
+            if wire.name == "b":
+                wire.operation.left_val = override_b
+                break
     # mapping wire_name -> wire's that rely on this wire
     wire_dependents: dict[str, list[Wire]] = defaultdict(list)
     solved_cache: dict[str, int] = {}
@@ -73,7 +79,16 @@ def main() -> None:
             break
     # done
     # print("\n".join(str(wire) for wire in sorted(wires, key=lambda x: x.name)))
-    print(solved_cache["a"])
+    return solved_cache["a"]
+
+
+def main() -> None:
+    # part1
+    a: int = solve(None)
+    print(a)
+    # part2
+    a = solve(a)
+    print(a)
 
 
 if __name__ == "__main__":
