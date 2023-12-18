@@ -6,24 +6,28 @@ from typing import Iterable
 
 @dataclass
 class Route:
-    location1: str
-    location2: str
+    """Route between two cities"""
+
+    city1: str
+    city2: str
     cost: int
 
-    def orient(self, location: str) -> "Route":
-        if location == self.location1:
-            return self
-        return Route(self.location2, self.location1, self.cost)
-
     def get_destination(self, location: str) -> None | str:
-        if location == self.location1:
-            return self.location2
-        elif location == self.location2:
-            return self.location1
+        """
+        Returns:
+        Other destiniation if we are one of them
+        None otherwise
+        """
+        if location == self.city1:
+            return self.city2
+        if location == self.city2:
+            return self.city1
         return None
 
 
-class Location:
+class City:
+    """City with list of connections and costs"""
+
     name: str
     connections: dict[str, int]
 
@@ -31,10 +35,8 @@ class Location:
         self.name = name
         self.connections = {}
         for route in routes:
-            dest = route.get_destination(self.name)
-            if dest is None:
-                continue
-            self.connections[dest] = route.cost
+            if dest := route.get_destination(self.name):
+                self.connections[dest] = route.cost
 
 
 @dataclass(order=True)
@@ -52,7 +54,7 @@ class Tour:
 def get_input() -> list[Route]:
     """Parses our input file into well defined routes"""
     routes: list[Route] = []
-    with open("input.txt") as file:
+    with open("input.txt", encoding="utf8") as file:
         for line in file:
             items = line.split()
             loc1, loc2, cost = items[0], items[2], items[4]
@@ -73,22 +75,21 @@ def get_city_names(routes: list[Route]) -> set[str]:
     """Get city names from list of routes"""
     city_names: set[str] = set()
     for route in routes:
-        city_names.add(route.location1)
-        city_names.add(route.location2)
+        city_names.add(route.city1)
+        city_names.add(route.city2)
     return city_names
 
 
-def create_locations(
-    city_names: Iterable[str], routes: list[Route]
-) -> dict[str, Location]:
+def create_locations(city_names: Iterable[str], routes: list[Route]) -> dict[str, City]:
     """create Locations and map them to a dict based on the city name"""
-    return {city_name: Location(city_name, routes) for city_name in city_names}
+    return {city_name: City(city_name, routes) for city_name in city_names}
 
 
 def solve(routes: list[Route]) -> list[Tour]:
+    """Solves our list of routes"""
     # init city name list
     city_names = get_city_names(routes)
-    locations = create_locations(city_names, routes)
+    cities = create_locations(city_names, routes)
 
     # add our start points
     queue: PriorityQueue[Tour] = PriorityQueue()
@@ -103,7 +104,7 @@ def solve(routes: list[Route]) -> list[Tour]:
         if len(tour.cities) == len(city_names):
             results.append(tour)
             continue
-        current_city: Location = locations[tour.cities[-1]]
+        current_city: City = cities[tour.cities[-1]]
         for connection, cost in current_city.connections.items():
             if connection in tour.city_set:
                 continue
