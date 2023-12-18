@@ -4,7 +4,7 @@ https://adventofcode.com/2015/day/6
 """
 
 
-def split_instruction_type(line):
+def split_instruction_type(line: str) -> tuple[str, str]:
     if line.startswith("toggle"):
         return "toggle", line[len("toggle") :]
     elif line.startswith("turn on"):
@@ -13,7 +13,7 @@ def split_instruction_type(line):
         return "turn off", line[len("turn off") :]
 
 
-def follow_instructions():
+def follow_instructions() -> None:
     size = 1000
     grid = [[0 for _ in range(size)] for _ in range(size)]
     """grabs the input"""

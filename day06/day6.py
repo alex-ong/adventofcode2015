@@ -14,7 +14,7 @@ class Command(StrEnum):
     ON = "turn on"
     OFF = "turn off"
 
-    def get_value(self, old_value):
+    def get_value(self, old_value: int) -> int:
         if PART_1:
             if self == Command.TOGGLE:
                 return 0 if old_value else 1
@@ -37,7 +37,7 @@ class Position:
     row: int
     col: int
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.row}, {self.col}"
 
 
@@ -48,29 +48,29 @@ class Instruction:
     range_to: Position
 
     @property
-    def row_range(self):
+    def row_range(self) -> tuple[int, int]:
         """row range inclusive"""
         if self.range_to.row < self.range_from.row:
             print(self.range_from, self.range_to)
         return self.range_from.row, self.range_to.row + 1
 
     @property
-    def col_range(self):
+    def col_range(self) -> tuple[int, int]:
         if self.range_to.col < self.range_from.col:
             print(self.range_from, self.range_to)
         return self.range_from.col, self.range_to.col + 1
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{str(self.command)}: {self.range_from} to {self.range_to}"
 
 
 class Grid:
     lights: list[list[int]]
 
-    def __init__(self, size):
+    def __init__(self, size: int) -> None:
         self.lights = [[0 for _ in range(size)] for _ in range(size)]
 
-    def execute(self, instruction):
+    def execute(self, instruction: Instruction) -> None:
         """executes an instruction"""
         row_range = instruction.row_range
         col_range = instruction.col_range
@@ -80,32 +80,33 @@ class Grid:
                 old_value = self.lights[row][col]
                 self.lights[row][col] = command.get_value(old_value)
 
-    def num_on(self):
+    def num_on(self) -> int:
         """returns how many are on"""
         return sum(sum(row) for row in self.lights)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "\n" + "\n".join(
             "".join("1" if value else "0" for value in row) for row in self.lights
         )
 
 
-def split_instruction_type(line):
+def split_instruction_type(line: str) -> tuple[Command, str]:
     """returns instruction type and rest of line"""
-    for command in list(Command):
+
+    for command in Command:
         if line.startswith(str(command)):
             remainder = line[len(command) :]
             return command, remainder
     raise ValueError(f"unknown instruction type: {line}")
 
 
-def split_position(string):
+def split_position(line: str) -> Position:
     """convert position string to well formed data type"""
-    row, col = string.strip().split(",")
+    row, col = line.strip().split(",")
     return Position(int(row), int(col))
 
 
-def parse_instruction(line):
+def parse_instruction(line: str) -> Instruction:
     """parses a single line of input"""
     command, string = split_instruction_type(line)
     range_from_str, range_to_str = string.split("through")
@@ -114,13 +115,13 @@ def parse_instruction(line):
     return Instruction(command, range_from, range_to)
 
 
-def get_instructions():
+def get_instructions() -> list[Instruction]:
     """grabs the input"""
     with open("input.txt", "r", encoding="utf8") as file:
         return [parse_instruction(line) for line in file]
 
 
-def main():
+def main() -> None:
     grid = Grid(1000)
 
     instructions = get_instructions()
