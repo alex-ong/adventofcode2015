@@ -41,7 +41,7 @@ def check_wire(
     solved_cache: dict[str, int],
     unsolved: set[Wire],
     wire_dependents: dict[str, list[Wire]],
-):
+) -> None:
     """Checks wire. If solvable, checks its dependents and solves more."""
     if wire.is_solvable(solved_cache) and wire in unsolved:
         solved_cache[wire.name] = wire.solve(solved_cache)

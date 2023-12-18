@@ -40,7 +40,6 @@ def non_null(item: Optional[int]) -> int:
 def operate(
     left_val: Optional[int], operator: Operator, right_val: Optional[int]
 ) -> int:
-    # type: ignore[operator]
     if operator == Operator.AND:
         return non_null(left_val) & non_null(right_val)
     if operator == Operator.OR:
